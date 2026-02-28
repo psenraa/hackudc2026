@@ -1,0 +1,729 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&display=swap');
+
+
+/* Paleta de colores tema oscuro */
+:root {
+  --bg:     #050810;
+  --panel:  #090d1a;
+  --border: #1a2540;
+  --neon:   #00f5c4;
+  --neon2:  #0077ff;
+  --warn:   #ff4d6d;
+  --amber:  #ff9a3c;
+  --text:   #c8d8f0;
+  --dim:    #3a4f70;
+  --glow:   0 0 12px #00f5c480;
+  --inset:  #060a14;
+}
+
+/* Paleta de colores tema blanco */
+body.light {
+  --bg:     #f0f4ff;
+  --panel:  #ffffff;
+  --border: #c5d0e8;
+  --neon:   #0099aa;
+  --neon2:  #0055cc;
+  --warn:   #cc2244;
+  --amber:  #cc6600;
+  --text:   #1a2540;
+  --dim:    #7a8fb0;
+  --glow:   0 0 12px #0099aa50;
+  --inset:  #e8edf8;
+}
+
+body.light::before { display: none; }
+
+body.light::after {
+  background-image:
+    linear-gradient(rgba(0,80,200,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,80,200,0.06) 1px, transparent 1px);
+}
+
+
+/* Botón cambio de tema */
+#btn-theme {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+  flex-shrink: 0;
+}
+#btn-theme:hover {
+  border-color: var(--neon);
+  box-shadow: var(--glow);
+}
+#btn-theme:active { transform: scale(0.92) rotate(20deg); }
+
+/* Icono del botón de cambio de tema */
+#theme-icon .sun-rays line {
+  stroke: var(--neon);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+#theme-icon .sun-outline {
+  fill: none;
+  stroke: var(--neon);
+  stroke-width: 1.5;
+}
+#theme-icon .sun-fill {
+  fill: var(--neon);
+  stroke: none;
+}
+
+/* Animación de giro del icono del cambio de tema */
+@keyframes theme-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+#theme-icon.spinning {
+  animation: theme-spin 0.45s ease-in-out forwards;
+}
+
+
+/* Elimina los márgenes por defecto del navegador y establece la tipografía, colores y dimensiones
+  base de toda la página */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 2px,
+    rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999; /* Por encima de todo */
+}
+
+
+/* Cuadrículas que están en el background en ambos temas */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,120,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,120,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Título y boton cambio de tema */
+header {
+  position: relative;
+  z-index: 10;
+  padding: 24px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+}
+/* Palabra Mouse verde neon */
+.logo {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.6rem;
+  color: var(--neon);
+  text-shadow: var(--glow);
+  letter-spacing: 0.05em;
+}
+/* Palabra Pass en azul neon */
+.logo span { color: var(--neon2); }
+/* Texto de "Entropy-based password security " */
+.tagline {
+  font-size: 0.8rem;
+  color: var(--dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Las tres pestañas: Generar, Verificar y Vault */
+.tabs {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border);
+  gap: 4px;
+}
+.tab {
+  padding: 14px 24px;
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+/* La pestaña seleccionada está de color azul claro neon y subrayado del mismo color */
+.tab.active { color: var(--neon); }
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 2px;
+  background: var(--neon);
+  box-shadow: var(--glow);
+}
+.tab:hover:not(.active) { color: var(--text); }
+
+/* Se define el ancho máximo y solo se muestra la pestaña que está .active */
+.main {
+  position: relative;
+  z-index: 10;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px;
+}
+.section { display: none; }
+.section.active { display: block; }
+
+/* Bloque de código de las tarjetas que se muestran en las tres pestañas */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+/* Header con Título a la izquierda y botón derecha. Usado en Generar   */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+/* Header para tarjeta con el título + el '▶' delante. Usado en el resto de tarjetas */
+.panel-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--neon);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-title::before { content: '▶'; font-size: 0.6rem; }
+
+/* Recuadro capturar entropía
+   Modo normal (el usuario no interactua con el recuadro) -> borde gris
+  Modo collecting (el usuario está interactuando con el recuadro) -> borde verde
+  Modo resetting (el usuario pulsa el botón de "Recapturar Entropía" ) -> borde naranja */
+#entropy-zone {
+  width: 100%;
+  height: 200px;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  cursor: crosshair;
+  background: var(--inset);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+#entropy-zone.collecting {
+  border-color: var(--neon);
+  box-shadow: inset 0 0 30px rgba(0,245,196,0.05);
+}
+#entropy-zone.resetting {
+  border-color: var(--amber);
+  box-shadow: inset 0 0 30px rgba(255,154,60,0.08);
+  cursor: default;
+}
+
+/* Texto e icono del ratón antes de que se interactúe con el recuadro */
+.entropy-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+.entropy-hint .icon { font-size: 2.5rem; }
+.entropy-hint p {
+  font-size: 0.85rem;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+}
+
+/* Botón "Regenerar Entropía" y la flecha */
+#btn-reset-entropy {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border: 1px solid var(--amber);
+  background: transparent;
+  color: var(--amber);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.1s;
+}
+#btn-reset-entropy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--amber);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+#btn-reset-entropy:hover::before  { opacity: 0.1; }
+#btn-reset-entropy:hover          { box-shadow: 0 0 14px rgba(255,154,60,0.45); }
+#btn-reset-entropy:active         { transform: scale(0.96); }
+
+/* Animación de la flecha que gira al pulsar el botón */
+.reset-icon { display: inline-block; font-style: normal; }
+@keyframes spin-ccw {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+#btn-reset-entropy.spinning .reset-icon {
+  animation: spin-ccw 0.55s ease-in-out forwards;
+}
+
+/* Barra de progreso de la captura de la entropía de color gradiente y texto X/100 bits */
+.entropy-bar-wrap {
+  margin-top: 14px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+#entropy-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--neon2), var(--neon));
+  box-shadow: 0 0 8px var(--neon);
+  transition: width 0.1s, background 0.4s, box-shadow 0.4s;
+}
+#entropy-bar.resetting {
+  background: linear-gradient(90deg, var(--amber), #ffcc44);
+  box-shadow: 0 0 8px var(--amber);
+}
+.entropy-label {
+  margin-top: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--dim);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Tarjeta de configuración, parte de la Longitud */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.opt-group label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.opt-group input[type=range] { width: 100%; accent-color: var(--neon); }
+
+/* Tarjeta de configuración, parte de checkboxes y texto de las 4 opciones */
+.checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text);
+  letter-spacing: 0.06em;
+}
+.check-item input { accent-color: var(--neon); cursor: pointer; }
+
+/* Tarjeta de Contraseña Generada, con su recuadro y la contraseña generada */
+.password-output {
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.3rem;
+  letter-spacing: 0.08em;
+  color: var(--neon);
+  text-shadow: var(--glow);
+  word-break: break-all;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+}
+#password-text { flex: 1; }
+
+/* Barra y texto de que tan segura es la contraseña */
+.strength-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 12px;
+  align-items: center;
+}
+.strength-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s, background 0.4s;
+}
+#strength-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  min-width: 100px;
+  text-align: right;
+}
+
+/* Filas de botones. Usado en la tarjeta de Contraseña Generada y en la de Configuración */
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* Botones generales. Distrubuidos en tres tipos (por color):
+  .btn -> borde + texto verde neon 
+  .btn.secondary -> borde + texto azul
+  .btn.danger -> borde + texto rojo */
+.btn {
+  padding: 10px 20px;
+  border: 1px solid var(--neon);
+  background: transparent;
+  color: var(--neon);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--neon);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn:hover::before { opacity: 0.1; }
+.btn:hover         { box-shadow: var(--glow); }
+.btn:active        { transform: scale(0.97); }
+.btn.secondary     { border-color: var(--neon2); color: var(--neon2); }
+.btn.secondary:hover { box-shadow: 0 0 12px #0077ff80; }
+.btn.secondary::before { background: var(--neon2); }
+.btn.danger        { border-color: var(--warn); color: var(--warn); }
+.btn.danger:hover  { box-shadow: 0 0 12px #ff4d6d80; }
+.btn.danger::before { background: var(--warn); }
+.btn:disabled      { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+/* Pestaña Verificar. Recuadro para escribir la contraseña y botón de Verificar */
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.input-group input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1rem;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-group input:focus {
+  border-color: var(--neon);
+  box-shadow: 0 0 8px rgba(0,245,196,0.15);
+}
+
+/* Pestaña Verificar. Recuadro resultado que puede ser:
+  .safe -> color verde + mensaje
+  .pwned -> color rojo + mensaje*/
+#check-result {
+  padding: 16px 20px;
+  border-radius: 4px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.9rem;
+  display: none;
+  line-height: 1.7;
+}
+#check-result.safe {
+  display: block;
+  background: rgba(0,245,196,0.07);
+  border: 1px solid var(--neon);
+  color: var(--neon);
+}
+#check-result.pwned {
+  display: block;
+  background: rgba(255,77,109,0.07);
+  border: 1px solid var(--warn);
+  color: var(--warn);
+}
+
+/* Pestaña Vault. Botones Desbloquear y Bloquear */
+.vault-unlock {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+/* Pestaña Vault. Formulario para nueva entrada (sitio, usuario y contraseña) */
+.vault-entry-form {
+  display: none;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: end;
+}
+.vault-entry-form.visible { display: grid; }
+
+.form-field label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.form-field input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.9rem;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-field input:focus { border-color: var(--neon); }
+
+/* Pestaña Vault. Lista con las entradas guardadas. La contraseña está blur, pero si se mantiene el ratón por encima se quita el blur*/
+.vault-list { display: flex; flex-direction: column; gap: 8px; }
+.vault-item {
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(120px, 1fr) minmax(100px, 2fr) auto;
+  gap: 12px;
+  align-items: center;
+  transition: border-color 0.2s;
+}
+.vault-item:hover { border-color: var(--dim); }
+.vault-item .site { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.vault-item .user { font-size: 0.85rem; color: var(--dim); font-family: 'Share Tech Mono', monospace; }
+
+/* Contraseña renderizada en Canvas */
+.pass-canvas-wrap {
+  cursor: pointer;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.pass-canvas {
+  display: block;
+  height: 28px;
+  flex-shrink: 0;
+}
+.vault-item .actions { display: flex; gap: 6px; }
+
+/* Botones de copiar la contraseña y eliminar la entrada */
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  padding: 5px 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+.icon-btn:hover     { border-color: var(--neon); color: var(--neon); }
+.icon-btn.del:hover { border-color: var(--warn); color: var(--warn); }
+
+/* Pestaña Vault. Se muestra texto de que el Vault vacío, no hay ninguna entrada */
+.empty-vault {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 48px 24px;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(0,245,196,0.02) 0%, rgba(0,119,255,0.03) 100%);
+  text-align: center;
+}
+.empty-vault-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--neon);
+  text-shadow: var(--glow);
+}
+.empty-vault-sub {
+  font-size: 0.82rem;
+  color: var(--dim);
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+}
+.empty-vault-sub span {
+  color: var(--neon2);
+  opacity: 0.8;
+}
+
+/* Notificaciones abajo derecha */
+#toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--panel);
+  border: 1px solid var(--neon);
+  color: var(--neon);
+  padding: 12px 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  border-radius: 3px;
+  box-shadow: var(--glow);
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s;
+  pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+
+/* Círculo brillante alrededor del cursor */
+#cursor-glow {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,245,196,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/* Modal de confirmación al eliminar una entrada del vault. */
+#confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+#confirm-overlay.visible {
+  display: flex;
+}
+#confirm-modal {
+  background: var(--panel);
+  border: 1px solid var(--warn);
+  border-radius: 4px;
+  padding: 32px 36px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 0 40px rgba(255,77,109,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* Título del modal en rojo con estilo de alerta */
+.confirm-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--warn);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+/* Texto del modal con el nombre del sitio resaltado en verde */
+.confirm-msg {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+.confirm-msg strong { color: var(--neon); }
+/* Botones Eliminar y Cancelar alineados a la derecha */
+.confirm-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* Ajuste para pantallas más pequeñas */
+@media (max-width: 640px) {
+  header { padding: 16px 20px; }
+  .tabs  { padding: 0 20px; }
+  .main  { padding: 20px; }
+  .panel-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .vault-entry-form.visible { grid-template-columns: 1fr; }
+  .vault-item { grid-template-columns: 1fr auto; grid-template-rows: auto auto; }
+}

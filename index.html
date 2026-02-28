@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MousePass</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="cursor-glow"></div>
+
+<header>
+  <div>
+    <div class="logo">Mouse<span>Pass</span></div>
+    <div class="tagline">Entropy-based password security</div>
+  </div>
+  <button id="btn-theme" title="Cambiar tema claro / oscuro" aria-label="Cambiar tema">
+    <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path class="sun-outline" d="M12 4 A8 8 0 0 1 12 20 Z" />
+      <path class="sun-fill"    d="M12 4 A8 8 0 0 0 12 20 Z" />
+      <g class="sun-rays">
+        <line x1="12" y1="1"    x2="12" y2="3"   />
+        <line x1="12" y1="21"   x2="12" y2="23"  />
+        <line x1="1"  y1="12"   x2="3"  y2="12"  />
+        <line x1="21" y1="12"   x2="23" y2="12"  />
+        <line x1="4.22"  y1="4.22"  x2="5.64"  y2="5.64"  />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36" />
+        <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"  />
+      </g>
+    </svg>
+  </button>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="generate">Generar</button>
+  <button class="tab" data-tab="check">Verificar</button>
+  <button class="tab" data-tab="vault">Vault</button>
+</nav>
+
+<main class="main">
+
+  <section id="tab-generate" class="section active">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Mueve el ratón en el recuadro para capturar la entropía</div>
+        <button id="btn-reset-entropy" title="Borrar la entropía capturada y empezar de nuevo">
+          <span class="reset-icon">↺</span> Recapturar entropía
+        </button>
+      </div>
+      <div id="entropy-zone">
+        <canvas id="entropy-canvas"></canvas>
+        <div class="entropy-hint" id="entropy-hint">
+          <div class="icon">🖱️</div>
+          <p>Mueve el ratón aquí para generar entropía real</p>
+        </div>
+      </div>
+      <div class="entropy-bar-wrap">
+        <div id="entropy-bar"></div>
+      </div>
+      <div class="entropy-label">
+        <span>Entropía recopilada</span>
+        <span id="entropy-pct">0 / 100 bits</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title" style="margin-bottom:20px">Configuración</div>
+      <div class="options-grid">
+        <div class="opt-group">
+          <label>Longitud: <strong id="len-val">24</strong></label>
+          <input type="range" id="length" min="8" max="64" value="24">
+        </div>
+      </div>
+      <div class="checkboxes">
+        <label class="check-item"><input type="checkbox" id="opt-upper"    checked> Mayúsculas (A-Z)</label>
+        <label class="check-item"><input type="checkbox" id="opt-lower"    checked> Minúsculas (a-z)</label>
+        <label class="check-item"><input type="checkbox" id="opt-digits"   checked> Números (0-9)</label>
+        <label class="check-item"><input type="checkbox" id="opt-symbols"  checked> Símbolos (!@#$…)</label>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btn-generate" disabled>Generar Contraseña</button>
+      </div>
+    </div>
+
+    <div class="panel" id="result-panel" style="display:none">
+      <div class="panel-title" style="margin-bottom:20px">Contraseña Generada</div>
+      <div class="password-output">
+        <span id="password-text">—</span>
+      </div>
+      <div class="strength-row">
+        <div class="strength-bar">
+          <div class="strength-fill" id="strength-fill"></div>
+        </div>
+        <span id="strength-label"></span>
+      </div>
+      <div class="btn-row">
+        <button class="btn"           id="btn-copy">📋 Copiar</button>
+        <button class="btn secondary" id="btn-save-vault">Guardar en Vault</button>
+        <button class="btn secondary" id="btn-check-this">Verificar Filtración</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-check" class="section">
+    <div class="panel">
+      <div class="panel-title" style="margin-bottom:20px">Verificar contra filtraciones conocidas</div>
+      <p style="font-size:0.88rem; color:var(--dim); margin-bottom:16px; line-height:1.6;">
+        La contraseña se contrasta con la base de datos de
+        <a href="https://haveibeenpwned.com/Passwords" target="_blank" rel="noopener"
+           style="color:var(--text); text-decoration:underline;">
+          haveibeenpwned.com/Passwords
+        </a>
+        enviando los 5 primeros caracteres del hash SHA-1.
+        Tu contraseña nunca sale del navegador. Más de 700 millones de contraseñas indexadas.
+      </p>
+      <div class="input-group">
+        <input type="password" id="check-input" placeholder="Introduce tu contraseña…">
+        <button class="btn" id="btn-check">Verificar</button>
+      </div>
+      <div id="check-result"></div>
+    </div>
+  </section>
+
+  <section id="tab-vault" class="section">
+    <div class="panel">
+      <div class="panel-title" style="margin-bottom:20px">Vault — Almacenamiento Local Cifrado</div>
+      <p style="font-size:0.88rem; color:var(--dim); margin-bottom:16px; line-height:1.6;">
+        Las contraseñas se cifran con <strong style="color:var(--text)">AES-GCM 256 bits</strong>
+        mediante la Web Crypto API y se guardan en tu navegador.
+        La clave se deriva con <strong style="color:var(--text)">PBKDF2 (600 000 iteraciones)</strong>
+        y nunca se almacena.
+      </p>
+
+      <div class="vault-unlock" style="justify-content: flex-start;">
+        <button class="btn"           id="btn-unlock">Desbloquear Vault</button>
+        <button class="btn danger"    id="btn-lock" style="display:none">Bloquear Vault</button>
+      </div>
+      <div id="vault-locked-msg"
+           style="color:var(--dim); font-family:'Share Tech Mono',monospace; font-size:0.82rem;">
+        ↑ Haz clic para autenticarte usando la seguridad de tu equipo
+      </div>
+
+      <div id="vault-content" style="display:none">
+        <div class="vault-entry-form" id="add-form">
+          <div class="form-field">
+            <label>Sitio</label>
+            <input id="f-site" placeholder="github.com">
+          </div>
+          <div class="form-field">
+            <label>Usuario</label>
+            <input id="f-user" placeholder="usuario@email.com">
+          </div>
+          <div class="form-field">
+            <label>Contraseña</label>
+            <input id="f-pass" type="password" placeholder="Contraseña…">
+          </div>
+          <button class="btn" id="btn-add-entry">+ Añadir</button>
+        </div>
+
+        <div class="vault-list" id="vault-list"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast"></div>
+
+<!-- Modal de confirmación de eliminación -->
+<div id="confirm-overlay" style="display:none">
+  <div id="confirm-modal">
+    <div class="confirm-title">⚠ Eliminar entrada</div>
+    <div class="confirm-msg">¿Seguro que quieres eliminar <strong id="confirm-site"></strong>?<br>Esta acción no se puede deshacer.</div>
+    <div class="confirm-btns">
+      <button class="btn danger" id="confirm-yes">Eliminar</button>
+      <button class="btn secondary" id="confirm-no">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
