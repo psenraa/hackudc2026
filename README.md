@@ -1,6 +1,6 @@
 Autores: raojea, psenraa, yoelcanarion, peterrocherr
 
-MousePass es una aplicación web de arquitectura Zero-Knowledge para la generacion, verificacion y almacenamiento de contraseñas. Funciona estrictamente en el lado del cliente, asegurando que las credenciales nunca abandonen el equipo local.
+MousePass es una aplicacion web de arquitectura Zero-Knowledge para la generacion, verificacion y almacenamiento de contraseñas. Funciona estrictamente en el lado del cliente, asegurando que las credenciales nunca abandonen el equipo local.
 
 Funcionalidades
 
